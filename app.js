@@ -1,10 +1,12 @@
 if (process.env.NODE_ENV != "production") {
-  require('dotenv').config();
+  require("dotenv").config();
 }
 
 const express = require("express");
 const app = express();
+
 const mongoose = require("mongoose");
+const dns = require("dns");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -16,26 +18,25 @@ const Passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
-const { log } = require('console');
 
+// DNS
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
+// MongoDB URL
 const dbUrl = process.env.ATLASDB_URL;
 
-main()
+// Connect MongoDB
+mongoose
+  .connect(dbUrl)
   .then(() => {
-    console.log("connected to DB");
+    console.log("MongoDB Connected");
   })
   .catch((err) => {
-    console.log(err);
+    console.error("MongoDB Error:", err);
   });
-
-async function main() {
-  await mongoose.connect(dbUrl);
-}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

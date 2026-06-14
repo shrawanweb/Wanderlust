@@ -1,20 +1,25 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../models/listing.js");
 
-main()
+const dbUrl = process.env.ATLASDB_URL;
+
+mongoose
+  .connect(dbUrl)
   .then(() => {
-    console.log("connected to DB");
+    console.log("MongoDB Connected");
   })
   .catch((err) => {
-    console.log(err);
+    console.error("MongoDB Error:");
+    console.error(err);
   });
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+  await mongoose.connect("mongodb+srv://shrawansaw89_db_user:2a51Z5SfUx1OrwHi@wanderlust-cluster.snc6qy6.mongodb.net/?appName=wanderlust-cluster");
 }
 
-const initDb = async () => {
+const initDB = async () => {
   await Listing.deleteMany({});
   initData.data = initData.data.map((obj) => ({
     ...obj,

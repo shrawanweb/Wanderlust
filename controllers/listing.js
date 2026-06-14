@@ -4,6 +4,9 @@ const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.index = async (req, res) => {
   let allListings = await Listing.find({});
+
+  console.log(JSON.stringify(allListings, null, 2));
+
   res.render("listings/index.ejs", { allListings });
 };
 
@@ -29,16 +32,28 @@ module.exports.showListing = async (req, res) => {
   res.render("listings/show.ejs", { listing, reviews: listing.reviews });
 };
 
-module.exports.createListing = async (req, res, next) => {
-  let url = req.file.path;
-  let filename = req.file.filename;
-  console.log(req.body);
+module.exports.createListing = async (req, res) => {
+  console.log("Uploaded File:", req.file);
 
   const newListing = new Listing(req.body.listing);
+
+  if (req.file) {
+    newListing.image = {
+      url: req.file.secure_url || req.file.path,
+      filename: req.file.filename || req.file.public_id,
+    };
+  }
+
   newListing.owner = req.user._id;
-  newListing.image = { url, filename };
+
+  console.log("Before Save:");
+  console.log(newListing);
 
   await newListing.save();
+
+  console.log("After Save:");
+  console.log(await Listing.findById(newListing._id));
+
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
 };

@@ -18,12 +18,12 @@ router
   .route("/")
   .get(wrapAsync(listingController.index))
   .post(
-    isLoggedIn,
-    logRequest,
-    upload.single("listing[image]"),
-    validateListing,
-    wrapAsync(listingController.createListing)
-  );
+  isLoggedIn,
+  upload.single("listing[image]"),
+  logRequest,
+  validateListing,
+  wrapAsync(listingController.createListing)
+);
 
 //New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);
