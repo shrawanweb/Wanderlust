@@ -38,6 +38,7 @@ mongoose
     console.error("MongoDB Error:", err);
   });
 
+app.set("trust proxy", 1);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
@@ -71,10 +72,11 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-  },
+  expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+},
 };
 
 
@@ -122,6 +124,8 @@ app.use((err, req, res, next) => {
   // res.status(statusCode).send(message);
 });
 
-app.listen(8080, () => {
-  console.log("server is listening to port 8080");
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
